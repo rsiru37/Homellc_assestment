@@ -20,7 +20,7 @@ export const EditUserModal : React.FC<EditUserModalProps> = ({ addr, home_id, is
                 const response = await axios.get("http://localhost:3000/user/find-by-home", {params :{home_id}});
                 console.log("R", response);
                 if(response.status === 200) {
-                    const selected_users = response.data.users.map((user:any) => user.id);
+                    const selected_users = await response.data.users.map((user:any) => user.id);
                     setchecked_users(selected_users);
                 }
                 else{

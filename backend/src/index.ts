@@ -52,7 +52,7 @@ app.get('/user/find-by-home', async(req,res) => {
       }
   })
   const users = home_users?.user_interests?.map(obj => obj.users);
-  res.json({status:200, data:users}) 
+  res.json({users}) 
   } catch (error) {
     res.json({error});
   }

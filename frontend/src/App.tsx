@@ -27,12 +27,13 @@ function App() {
 
   useEffect(() => {
     const fetchHomes = async() => {
-      const homes:any = await axios.get("http://localhost:3000/home/find-by-user", { params: {selected_user}});
-      if(homes?.data.homes){
-        sethomes(homes.data.homes);
-        setloading(false);
-      }
-      else{
+      try {
+        const homes:any = await axios.get("http://localhost:3000/home/find-by-user", { params: {selected_user}});
+        if(homes?.data.homes){
+          sethomes(homes.data.homes);
+          setloading(false);
+        } 
+      } catch (error) {
         alert("Something Went wrong, Retry");
       }
       }
