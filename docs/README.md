@@ -4,8 +4,8 @@
 
 1. ```git clone https://github.com/<username>/full_stack_assessment_skeleton.git```
 2. Start the MySQL Server `docker-compose -f docker-compose.final.yml up --build -d`
-3. Start the Backend Server, Navigate to ./backend folder and run `npm run dev`
-4. Start the Frontend Server, Navigate to ./frontend folder and run `npm run dev`
+3. Start the Backend Server, Navigate to ./backend folder and run `npm install` run `npx prisma generate` and then run `npm run dev`
+4. Start the Frontend Server, Navigate to ./frontend folder and run `npm install` and then run `npm run dev`
 5. Goto "http://localhost:5173" and try the Application
 
    
