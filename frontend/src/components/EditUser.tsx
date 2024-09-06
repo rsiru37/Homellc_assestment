@@ -18,28 +18,29 @@ export const EditUserModal : React.FC<EditUserModalProps> = ({ addr, home_id, is
                 const res_users:any = await axios.get("http://localhost:3000/user/find-all");
                 setusers(res_users.data.users);
                 const response = await axios.get("http://localhost:3000/user/find-by-home", {params :{home_id}});
-                const selected_users = response.data.users.map((user:any) => user.id);
-                setchecked_users(selected_users);
-                console.log("UF", selected_users);
+                console.log("R", response);
+                if(response.status === 200) {
+                    const selected_users = response.data.users.map((user:any) => user.id);
+                    setchecked_users(selected_users);
+                }
+                else{
+                    alert("Something went wrong, Re-try");
+                }
             }
         }
         fetchUsers();
     }, [isOpen, home_id]);
 
     const handleCheck = (user_id:number) => {
-        console.log("Entered!")
             if(checked_users?.includes(user_id)){
                 setchecked_users(checked_users.filter((num:number) => num!==user_id));
-                console.log("CD", checked_users);
             }
             else{
                 setchecked_users([...checked_users,user_id]);
             }
-        console.log("B", checked_users);
     }
 
     const handleSave = async() => {
-        console.log("Final Checked_users", checked_users);
         try {
             const resp = await axios.put("http://localhost:3000/home/update-users", {home_id, checked_users});
             if(resp.status===200){
@@ -52,12 +53,12 @@ export const EditUserModal : React.FC<EditUserModalProps> = ({ addr, home_id, is
 
     return (
         <Modal show={isOpen} onHide={onClose}>
-            <Modal.Header closeButton>
+            <Modal.Header >
                 <Modal.Title>Edit User for {addr}</Modal.Title>
+                <Button variant="secondary" onClick={onClose} style={{ marginLeft: 'auto' }}> Close</Button>
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                <p>CHECKED USERS{checked_users}</p>
                     {users.map((obj:any) => (
                         <div key = {obj.id}>
                         <input type="checkbox" id={obj.id} value={obj.id} checked={checked_users?.includes(obj.id)} onChange={() => {handleCheck(obj.id)}}/>

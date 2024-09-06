@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://db_user:6equj5_db_user@localhost:3306/home_db"
 }
 
 model homes {

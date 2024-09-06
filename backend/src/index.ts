@@ -13,14 +13,14 @@ app.get('/' , async(req,res) => {
 
 app.get('/user/find-all', async(req,res) => {
     const users = await prisma.users.findMany();
-    console.log("Users", users);
     res.json({users})
 })
 
 app.get('/home/find-by-user', async(req,res) => {
     const selectedUser:any = req.query.selected_user || '0';
     const user_id: number = parseInt(selectedUser, 10);
-    const userWithHomes = await prisma.users.findUnique({
+    try {
+      const userWithHomes = await prisma.users.findUnique({
         where: {
           id: user_id,
         },
@@ -33,30 +33,34 @@ app.get('/home/find-by-user', async(req,res) => {
         },
       });
       const homes = userWithHomes?.user_interests?.map(obj => obj.homes);
-      console.log("HOMES", homes);
-      res.json({homes})
+      res.json({homes}) 
+    } catch (error) {
+        res.json({error});
+    }
 })
 
 app.get('/user/find-by-home', async(req,res) => {
   const selectedHome:any = req.query.home_id || '0';
   const home_id:number = parseInt(selectedHome);
+  try {
     const home_users = await prisma.homes.findUnique({
-        where : { id: home_id},
-        include : {
-            user_interests : {
-                include:{ users: true}
-            }
-        }
-    })
-    const users = home_users?.user_interests?.map(obj => obj.users);
-    console.log("HU", home_users);
-    res.json({users})
+      where : { id: home_id},
+      include : {
+          user_interests : {
+              include:{ users: true}
+          }
+      }
+  })
+  const users = home_users?.user_interests?.map(obj => obj.users);
+  res.json({status:200, data:users}) 
+  } catch (error) {
+    res.json({error});
+  }
 })
 
 app.put("/home/update-users", async(req,res) => {
   const home_id = req.body.home_id;
   const new_users_ids = req.body.checked_users;
-  console.log("H,NU", home_id, new_users_ids);
 try {
   await prisma.user_interests.deleteMany({
     where: {home_id:home_id}

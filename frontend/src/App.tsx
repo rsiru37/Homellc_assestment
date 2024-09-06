@@ -2,27 +2,26 @@ import { useEffect, useState } from 'react'
 //import './App.css'
 import axios from "axios"
 import { Card } from './components/Card';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [users, setusers] = useState<any[]>([]);
-  const [selected_user,setuser] = useState<any>(0);
+  const [selected_user,setuser] = useState<any>();
   const [homes,sethomes] = useState([]);
-  console.log("Hi1");
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     const fetchUserData = async () =>{
-      console.log("H12");
       const response:any = await axios.get("http://localhost:3000/user/find-all");
-      console.log("Users", response.data.users);
       const usernames:string[] = response.data.users.map((user: { username: any; }) => user.username);
       setusers(response.data.users);
     }
     fetchUserData();
-  }, []);
+  }, [selected_user]);
 
   const handleUser = (event:React.ChangeEvent<HTMLSelectElement>) => {
     const userId = parseInt(event.target.value, 10);
     setuser(userId);
-    console.log("Selected user_id", selected_user);
+    setloading(true);
   }
 
 
@@ -31,15 +30,18 @@ function App() {
       const homes:any = await axios.get("http://localhost:3000/home/find-by-user", { params: {selected_user}});
       if(homes?.data.homes){
         sethomes(homes.data.homes);
+        setloading(false);
       }
-      console.log("Homes", homes.data);
+      else{
+        alert("Something Went wrong, Retry");
+      }
       }
     fetchHomes();
   }, [selected_user]);
 
   return (
     <>
-      <h1>Vite + React</h1>
+      <h1>HomeLLC Assestment</h1>
       <label htmlFor="user-select">Select a User: </label>
       <select id="user-select" value = {selected_user ?? ''} onChange={handleUser}>
         <option value="" disabled>Select a user</option>
@@ -50,15 +52,26 @@ function App() {
         ))}
       </select>
       <div className='row'>
-      {/* <Card addr = "hi" state="AP" zip="123" sqft={4546} beds={123} baths={37} list_price={69}/> */}
-        {homes.length > 0 ? (
-          homes?.map((card: any) => (
+        
+        { !loading && homes?.map((card: any) => (
             <div className='col-md-2.5 mb-4' key ={card.id}>
               <Card home_id={card.id} addr = {card.street_address} state={card.state} zip={card.zip} sqft={card.sqft} beds={card.beds} baths={card.baths} list_price={card.list_price}/>
             </div>
           ))
-        ) : (<p>    No Homes Available</p>)}
+        }
       </div>
+      <div>
+      {loading && <p style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            margin: 0,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '48px'
+        }}>Loading</p>}
+        </div>
     </>
   )
 }
